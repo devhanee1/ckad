@@ -11,7 +11,7 @@ spec:
   - name: math-add
     image: ubuntu
     command: ["expr", "3", "+", "2"]
-  restartPolicy: Always
+  restartPolicy: Never
 ```
 
 ## Sequentailly multiple job
@@ -75,6 +75,7 @@ sepc:
 ```
 
 # CronJobs
+- More complex
 
 ```
 apiVersion: batch/v1beta1
