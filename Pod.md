@@ -61,7 +61,36 @@ spec:
           name: app-config
           key: APP_COLOR
 ```
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      command: ["sh", "-c", "env && cat /etc/config/config.json && sleep 3600"]
+      env:
+        - name: APP_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: my-config
+              key: APP_ENV
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: my-config
+              key: LOG_LEVEL
+      volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: my-config
 
+```
 - ConfigMap
 ```
 apiVersion: v1
@@ -109,4 +138,57 @@ spec:
       limits:
         memory: "2Gi"
         cpu: 2
+```
+
+## Pod with Security
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 2000
+  containers:
+    - name: secure-container
+      image: busybox
+      command: ["sh", "-c", "id && sleep 3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+
+```
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drop-all-capabilities
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["sh", "-c", "sleep 3600"]
+      securityContext:
+        capabilities:
+          drop:
+            - ALL
+
+```
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: add-ipc-lock
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ["sh", "-c", "sleep 3600"]
+      securityContext:
+        capabilities:
+          add:
+            - IPC_LOCK
+
 ```
