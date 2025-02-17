@@ -22,6 +22,7 @@ metadata:
   name: math-add-job
 sepc:
   completions: 3
+  backoffLimit: 15 # This is so the job does not quit before it succeeds.
   template:
     spec:
       containers:
